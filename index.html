@@ -15,30 +15,78 @@
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight;
       let ctx = canvas.getContext("2d");
-
       ctx.fillStyle = "black"; //控制颜色
       ctx.strokeStyle = "none";
-      let painting = false;
+      ctx.lineWidth = 6;
+      ctx.lineCap = "round"
 
-      canvas.onmousedown = () => {
-        painting = true;
-      }; //当鼠标按下时，正在画（painting）为真
-      canvas.onmousemove = e => {
-        if (painting === true) {
-          ctx.beginPath();
-          ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI);
-          ctx.stroke();
-          ctx.fill();
-          //ctx.fillRect(e.clientX - 5, e.clientY - 5, 10, 10);画正方形， 控制横坐标，纵坐标，宽度，高度,减去5是指让鼠标点在正中心
-          //console.log(e.clientX); //获取屏幕的坐标
-          //console.log(e.clientY);
-        } else {
-          console.log("什么都不做");
-        }
-      };
-      canvas.onmouseup = () => {
-        painting = false;
-      };
+
+      //画线
+function drawLine(x1,y1,x2,y2){
+  ctx.beginPath();
+ ctx.moveTo(x1,y1);
+ ctx.lineTo(x2,y2);
+ ctx.stroke();
+}
+
+let painting = false;
+let last//声明一个last变量
+
+      let isTouchDevice = "ontouchstart" in document.documentElement;//在手机浏览器上画点
+      //console.log(isTouchDevice);
+      if (isTouchDevice) {
+  canvas.ontouchstart = (e) =>{
+    let x = e.touches[0].clientX;
+      let y = e.touches[0].clientY;
+last =[x , y]//获取xy作为第一个坐标
+  }
+        canvas.ontouchmove = (e) => {
+          //console.log(e);移动时能够打印出e的内容
+          //console.log(e.touches[0]); //查看第0个手指的坐标
+      let x = e.touches[0].clientX;
+      let y = e.touches[0].clientY;
+        //console.log(x, y);
+     drawLine(last[0],last[1],x,y)//画一个起点为上一次的线
+     last =[x , y] //立刻接一个上一个点位，链接新的线，实时更新
+//   
+//        ctx.beginPath();
+//           ctx.arc(x, y, 5, 0, 2 * Math.PI); //圆形
+//            ctx.stroke();
+//            ctx.fill();
+        };
+      } else {
+        canvas.onmousedown = (e) => {
+          painting = true;
+last =[e.clientX , e.clientY] //当鼠标按下时，这个点位为上一次的点
+        }; //当鼠标按下时，正在画（painting）为真
+        canvas.onmousemove = (e) => {
+          if (painting === true) {
+ //drawLine(0,0,e.clientX,e.clientY)//画线
+ drawLine(last[0],last[1],e.clientX,e.clientY)//画一个起点为上一次的线
+ last =[e.clientX , e.clientY] //立刻接一个上一个点位，链接新的线，实时更新
+
+//            ctx.beginPath();
+//             ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI); //圆形
+//            ctx.stroke();
+//             ctx.fill();
+           // ctx.fillRect(e.clientX - 5, e.clientY - 5, 10, 10);画正方形， 控制横坐标，纵坐标，宽度，高度,减去5是指让鼠标点在正中心
+            //console.log(e.clientX); //获取屏幕的坐标
+            //console.log(e.clientY);
+
+        }
+else {
+            console.log("什么都不做");
+          }
+        };
+        canvas.onmouseup = () => {
+          painting = false;
+        };
+      }
+
+
+
+
+      
     </script>
   </body>
 </html>
