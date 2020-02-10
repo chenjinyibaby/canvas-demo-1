@@ -8,23 +8,36 @@
   </head>
   <link rel="stylesheet" href="style.css" />
   <body>
-    <div id="canvas"></div>
+    <canvas id="canvas" width="100" height="100"></canvas
+    ><!--canvas可以直接确认宽高，会与后面的css内容相互冲突，可以使他与屏幕一样的宽高-->
     <script>
-      canvas.onclick = e => {
-        // console.log(e); 打印出e的位置
-        console.log(e.clientX); //e在X和Y上面的位置（以一个最上角来确定哪一个x和y轴，得知用户鼠标地址点在哪里）
-        console.log(e.clientY);
-        let div = document.createElement("div"); //这个div是出现在内存中的
-        div.style.position = "absolute"; //相对定位
-        div.style.left = e.clientX + "px";
-        div.style.top = e.clientY + "px";
-        div.style.width = "6px";
-        div.style.height = "6px";
-        div.style.marginLeft = "-3px";
-        div.style.marginTop = "-3px";
-        div.style.borderRadius = "50%";
-        div.style.backgroundColor = "black";
-        canvas.appendChild(div); //使div出现在canvas上,目的是画一个黑点
+      let canvas = document.getElementById("canvas"); //获取canvas
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      let ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "black"; //控制颜色
+      ctx.strokeStyle = "none";
+      let painting = false;
+
+      canvas.onmousedown = () => {
+        painting = true;
+      }; //当鼠标按下时，正在画（painting）为真
+      canvas.onmousemove = e => {
+        if (painting === true) {
+          ctx.beginPath();
+          ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.fill();
+          //ctx.fillRect(e.clientX - 5, e.clientY - 5, 10, 10);画正方形， 控制横坐标，纵坐标，宽度，高度,减去5是指让鼠标点在正中心
+          //console.log(e.clientX); //获取屏幕的坐标
+          //console.log(e.clientY);
+        } else {
+          console.log("什么都不做");
+        }
+      };
+      canvas.onmouseup = () => {
+        painting = false;
       };
     </script>
   </body>
